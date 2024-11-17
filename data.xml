@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Products>
+    <Product>
+        <Name>Defend Me, Attorney</Name>
+        <Price>199.99</Price>
+        <Category>Thriller</Category>
+    </Product>
+    <Product>
+        <Name>HIH (season 1, 2, 3)</Name>
+        <Price>299.99</Price>
+        <Category>Romance</Category>
+    </Product>
+</Products>

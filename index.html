@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration of Dynamic XML and API</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, hotpink, blue); /* Linear gradient from hotpink to blue */
+            color: black; /* Text color to be readable on the gradient */
+        }
+        header {
+            background: rgba(255, 255, 255, 0.9); /* Transparent black background for header */
+            width: 15%;
+            position: center;
+            align-items: center;
+            margin-left: 40%;
+            color: black;
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 5%;
+            border: 2px solid black; 
+        }
+        main {
+            padding: 20px;
+        }
+        /* Box styles */
+        section {
+            margin: 20px 0;
+            padding: 35px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 20%;
+            font-size: 18px;
+            position: center;
+            margin-top: 5%;
+        }
+
+        /* XML Section*/
+        #xml-data {
+            background: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            border: 2px solid #0b03ff;
+            margin-left: 20%; /* Purple border for XML section */
+        }
+
+        /* Weather Section*/
+        #api-data {
+            background: rgba(0, 0, 0, 0.7); /* Dark background */
+            color: #fff; /* Light text for contrast */
+            border: 2px solid #f703ff; /* Blue border for Weather section */
+            margin-top: -13%;
+            margin-left: 50% ;
+        }
+
+        h2 {
+            color: #7e3794;
+        }
+        p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body onload="loadXMLData(); loadAPIData();">
+    <header>
+        <h1>XML & API combined</h1>
+        <p>Dynamic Data Integration</p>
+    </header>
+    <main>
+        <section id="xml-data">
+            <h2>Product List (XML)</h2>
+            <p>Loading data...</p>
+        </section>
+        <section id="api-data">
+            <h2>Weather Information (API)</h2>
+            <p>Loading weather updates...</p>
+        </section>
+    </main>
+    <script>
+        // Load XML Data
+        function loadXMLData() {
+            fetch('data.xml')
+                .then(response => response.text())
+                .then(xmlString => {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
+                    const products = xmlDoc.getElementsByTagName('Product');
+
+                    let output = '';
+                    for (let product of products) {
+                        const name = product.getElementsByTagName('Name')[0].textContent;
+                        const price = product.getElementsByTagName('Price')[0].textContent;
+                        const category = product.getElementsByTagName('Category')[0].textContent;
+
+                        output += `<p><strong>${name}</strong> - $${price} (${category})</p>`;
+                    }
+                    document.getElementById('xml-data').innerHTML = output;
+                })
+                .catch(error => {
+                    document.getElementById('xml-data').innerHTML = '<p>Error loading XML data.</p>';
+                    console.error('Error loading XML:', error);
+                });
+        }
+
+        // Load API Data (OpenWeather API)
+        function loadAPIData() {
+            const apiKey = '3549eecddb85a028c787807fe239309d'; // Use the API key only
+            const city = 'Cebu';
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const weatherInfo = `
+                        <p><strong>City:</strong> ${city}</p>
+                        <p><strong>Temperature:</strong> ${data.main.temp}°C</p>
+                        <p><strong>Condition:</strong> ${data.weather[0].description}</p>
+                    `;
+                    document.getElementById('api-data').innerHTML = weatherInfo;
+                })
+                .catch(error => {
+                    document.getElementById('api-data').innerHTML = '<p>Error loading weather data.</p>';
+                    console.error('Error fetching API data:', error);
+                });
+        }
+    </script>
+</body>
+</html>
